@@ -39,12 +39,9 @@ function * processMessage (message) {
       'Content-Type': 'application/json'
     }
   })
-  // TODO (when TC groups API can handle M2M token):
-  // remove file ./groups.json
-  // un-comment the below two lines, remove the below 3rd line
-  // const groupsRes = yield tcAPIClient.get('/v3/groups')
-  // const groups = groupsRes.data
-  const groups = require('./groups.json')
+
+  const groupsRes = yield tcAPIClient.get('/v3/groups')
+  const groups = groupsRes.data
 
   const memberId = message.userId
   // handle each community
@@ -57,9 +54,7 @@ function * processMessage (message) {
     } else {
       const groupId = group.id
       logger.info(`Associate member ${memberId} to group ${groupId}`)
-      // TODO (when TC groups API can handle M2M token):
-      // un-comment below line
-      // yield tcAPIClient.post(`/v3/groups/${groupId}/members`, { memberId, membershipType: 'user' })
+      yield tcAPIClient.post(`/v3/groups/${groupId}/members`, { memberId, membershipType: 'user' })
     }
   }
 }
