@@ -55,7 +55,7 @@ function * processMessage (message) {
     } else {
       const groupId = group.id
       logger.info(`Associate member ${memberId} to group ${groupId}`)
-      yield tcAPIClient.post(`/v3/groups/${groupId}/members`, { memberId, membershipType: 'user' })
+      yield tcAPIClient.post(`/v3/groups/${groupId}/members`, { param: { memberId, membershipType: 'user' }})
     }
   }
 }
