@@ -73,3 +73,28 @@ export AUTH0_CLIENT_SECRET="<Auth0 Client Secret>"
 - write message:
   `{ "userId": 23225544, "userHandle": "lazybaer", "traitId": "communities", "categoryName": "Communities", "createdBy": 23225544, "createdAt": "8/7/18 9:58 PM", "updatedBy": 23225544, "updatedAt": "8/7/18 9:58 PM", "traits": { "data": [{ "cognitive": true, "blockchain": true, "ios": false, "predix": false }] } }`
 - watch the app console, it should show info of processing the message
+
+## Example bus payload
+
+```
+{
+  "userId": 23225544,
+  "userHandle": "lazybaer",
+  "traitId": "communities",
+  "categoryName": "Communities",
+  "createdAt": "8/7/18 9:58 PM",
+  "updatedBy": 23225544,
+  "traits": {
+    "data": [
+      {
+        "cognitive": true,
+        "blockchain": true,
+        "ios": true,
+        "predix": false
+      }
+    ]
+  },
+  "createdBy": 23225544,
+  - "updatedAt": "8/15/18 6:22 PM"
+}
+```
