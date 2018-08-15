@@ -32,13 +32,14 @@ const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (
     // ignore the message
     return
   }
-  if (!messageJSON.categoryName || messageJSON.categoryName.toLowerCase() !== 'communities') {
-    logger.info('The message categoryName field is not \'communities\', it is ignored.')
+  const payload = _.get(messageJSON, 'payload', {})
+  if (_.get(payload, 'traitId', '').toLowerCase() !== 'communities') {
+    logger.info('The message traitId field is not \'communities\'. ignoring.')
     // ignore the message
     return
   }
   return co(function * () {
-    yield ProcessorService.processMessage(messageJSON)
+    yield ProcessorService.processMessage(payload)
   })
     // commit offset
     .then(() => consumer.commitOffset({ topic, partition, offset: m.offset }))
