@@ -15,7 +15,8 @@ const axios = require('axios')
 function * processMessage (message) {
   // find out all 'true' communities
   const communities = []
-  _.each(message.traits.data, (item) => {
+  const traits = _.get(message, 'traits.data', [])
+  _.each(traits, (item) => {
     _.forIn(item, (value, key) => {
       if (value) {
         const c = key.toLowerCase()
