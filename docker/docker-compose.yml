@@ -1,6 +1,7 @@
 version: '3'
 services:
   member-group-processor:
+    image: member-group-processor:latest
     build:
       context: ../
       dockerfile: docker/Dockerfile
