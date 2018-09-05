@@ -65,7 +65,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [ "develop", "dev-circleci" ]
+              only: [ "develop", "dev-circleci2" ]
       - "build-prod":
           filters:
             branches:
