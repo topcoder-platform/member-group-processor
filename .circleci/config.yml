@@ -25,6 +25,7 @@ jobs:
             chmod +x build.sh
             ./build.sh DEV
       - deploy:
+          name : Running Masterscript
           command: |
             git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/master_deply_v4.2.sh .
@@ -53,6 +54,7 @@ jobs:
              chmod +x build.sh
              ./build.sh PROD
       - deploy:
+          name : Running Masterscript
           command: |
             git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/master_deply_v4.2.sh .
