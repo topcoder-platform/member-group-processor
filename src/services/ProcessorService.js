@@ -9,25 +9,23 @@ const config = require('config')
 const axios = require('axios')
 
 /**
- * Process Kafka message
- * @param {Object} message the message
+ * Process Kafka message payload
+ * @param {Object} message the message payload
  */
 function * processMessage (message) {
-  // find out all 'true' communities
+  // find out communities and flags
   const communities = []
-  _.each(message.traits.data, (item) => {
+  const flags = []
+  const traits = _.get(message, 'traits.data', [])
+  _.each(traits, (item) => {
     _.forIn(item, (value, key) => {
-      if (value) {
-        const c = key.toLowerCase()
-        if (_.indexOf(communities, c) < 0) {
-          communities.push(c)
-        }
+      const c = key.toLowerCase()
+      if (_.indexOf(communities, c) < 0) {
+        communities.push(c)
+        flags.push(value)
       }
     })
   })
-  if (communities.length === 0) {
-    return
-  }
 
   // get groups
   const token = yield helper.getM2Mtoken()
@@ -39,22 +37,44 @@ function * processMessage (message) {
       'Content-Type': 'application/json'
     }
   })
-
+  logger.info('Get groups data.')
   const groupsRes = yield tcAPIClient.get('/v3/groups')
   const groups = groupsRes.data
 
-  const memberId = message.userId
   // handle each community
+  const memberId = message.userId
   for (let i = 0; i < communities.length; i += 1) {
     const community = communities[i]
+    const flag = flags[i]
     // find corresponding group id
     const group = _.find(groups.result.content, (g) => g.name && g.name.toLowerCase() === community)
     if (!group) {
       logger.error(`Invalid community: ${community}`)
+      continue
+    }
+    const groupId = group.id
+    // get group members
+    logger.info(`Get memberships of group ${groupId}`)
+    const groupMembersRes = yield tcAPIClient.get(`/v3/groups/${groupId}/members`)
+    const groupMembers = groupMembersRes.data
+    // find user from group members
+    const foundMembership = _.find(groupMembers.result.content, (m) => m.membershipType === 'user' && m.memberId === memberId)
+    if (flag) {
+      // add user if user is not in the group
+      if (!foundMembership) {
+        logger.info(`Add user ${memberId} to group ${groupId}`)
+        yield tcAPIClient.post(`/v3/groups/${groupId}/members`, { param: { memberId, membershipType: 'user' } })
+      } else {
+        logger.info(`The user ${memberId} is already in group ${groupId}`)
+      }
     } else {
-      const groupId = group.id
-      logger.info(`Associate member ${memberId} to group ${groupId}`)
-      yield tcAPIClient.post(`/v3/groups/${groupId}/members`, { memberId, membershipType: 'user' })
+      // remove user if user is in the group
+      if (foundMembership) {
+        logger.info(`Remove user ${memberId} from group ${groupId}`)
+        yield tcAPIClient.delete(`/v3/groups/${groupId}/members/${foundMembership.id}`)
+      } else {
+        logger.info(`The user ${memberId} is already NOT in group ${groupId}`)
+      }
     }
   }
 }

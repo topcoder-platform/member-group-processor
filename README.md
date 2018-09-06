@@ -1,4 +1,4 @@
-# Topcoder - Community Processor
+# Topcoder - Community Processor 
 
 ## Dependencies
 
@@ -54,7 +54,7 @@ export AUTH0_CLIENT_SECRET="<Auth0 Client Secret>"
 - run the producer and then write some message into the console to send to the `member.action.profile.trait.create` topic:
   `bin/kafka-console-producer.sh --broker-list localhost:9092 --topic member.action.profile.trait.create`
   in the console, write message, one message per line:
-  `{ "userId": 23225544, "userHandle": "lazybaer", "traitId": "communities", "categoryName": "Communities", "createdBy": 23225544, "createdAt": "8/7/18 9:58 PM", "updatedBy": 23225544, "updatedAt": "8/7/18 9:58 PM", "traits": { "data": [{ "cognitive": true, "blockchain": true, "ios": false, "predix": false }] } }`
+  `{ "payload": { "userId": 23225544, "userHandle": "lazybaer", "traitId": "communities", "categoryName": "Communities", "createdBy": 23225544, "createdAt": "8/7/18 9:58 PM", "updatedBy": 23225544, "updatedAt": "8/7/18 9:58 PM", "traits": { "data": [{ "cognitive": true, "blockchain": false, "ios": false, "predix": false }] } } }`
 - optionally, use another terminal, go to same directory, start a consumer to view the messages:
   `bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic member.action.profile.trait.create --from-beginning`
 - writing/reading messages to/from other topics are similar
@@ -65,11 +65,49 @@ export AUTH0_CLIENT_SECRET="<Auth0 Client Secret>"
 - run code lint check `npm run lint`, running `npm run lint:fix` can fix some lint errors if any
 - start processor app `npm start`
 
+## Local Deployment with Docker
+
+To run the Member Group Processor app using docker, follow the below steps
+
+1. Navigate to the directory docker
+2. Rename the file sample.api.env to api.env
+3. Set the required configuration in the file api.env
+4. Once that is done, run the following command
+
+```bash
+docker-compose up
+```
+
 ## Verification
 
 - start kafka server, start processor app
 - start kafka-console-producer to write messages to `member.action.profile.trait.create` topic:
   `bin/kafka-console-producer.sh --broker-list localhost:9092 --topic member.action.profile.trait.create`
 - write message:
-  `{ "userId": 23225544, "userHandle": "lazybaer", "traitId": "communities", "categoryName": "Communities", "createdBy": 23225544, "createdAt": "8/7/18 9:58 PM", "updatedBy": 23225544, "updatedAt": "8/7/18 9:58 PM", "traits": { "data": [{ "cognitive": true, "blockchain": true, "ios": false, "predix": false }] } }`
+  `{ "payload": { "userId": 23225544, "userHandle": "lazybaer", "traitId": "communities", "categoryName": "Communities", "createdBy": 23225544, "createdAt": "8/7/18 9:58 PM", "updatedBy": 23225544, "updatedAt": "8/7/18 9:58 PM", "traits": { "data": [{ "cognitive": true, "blockchain": false, "ios": false, "predix": false }] } } }`
 - watch the app console, it should show info of processing the message
+
+## Example bus payload
+
+```
+{
+  "userId": 23225544,
+  "userHandle": "lazybaer",
+  "traitId": "communities",
+  "categoryName": "Communities",
+  "createdAt": "8/7/18 9:58 PM",
+  "updatedBy": 23225544,
+  "traits": {
+    "data": [
+      {
+        "cognitive": true,
+        "blockchain": true,
+        "ios": true,
+        "predix": false
+      }
+    ]
+  },
+  "createdBy": 23225544,
+  - "updatedAt": "8/15/18 6:22 PM"
+}
+```
