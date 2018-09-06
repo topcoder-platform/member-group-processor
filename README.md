@@ -1,4 +1,4 @@
-# Topcoder - Community Processor
+# Topcoder - Community Processor 
 
 ## Dependencies
 
@@ -64,6 +64,19 @@ export AUTH0_CLIENT_SECRET="<Auth0 Client Secret>"
 - install dependencies `npm i`
 - run code lint check `npm run lint`, running `npm run lint:fix` can fix some lint errors if any
 - start processor app `npm start`
+
+## Local Deployment with Docker
+
+To run the Member Group Processor app using docker, follow the below steps
+
+1. Navigate to the directory docker
+2. Rename the file sample.api.env to api.env
+3. Set the required configuration in the file api.env
+4. Once that is done, run the following command
+
+```bash
+docker-compose up
+```
 
 ## Verification
 
