@@ -82,7 +82,6 @@ function * processMessage (message) {
 processMessage.schema = {
   message: Joi.object().keys({
     userId: Joi.number().integer().min(1).required(),
-    userHandle: Joi.string().required(),
     traitId: Joi.string().required(),
     categoryName: Joi.string().required(),
     createdBy: Joi.number().integer().min(1).required(),
@@ -90,6 +89,7 @@ processMessage.schema = {
     updatedBy: Joi.number().integer().min(1),
     updatedAt: Joi.string(),
     traits: Joi.object().keys({
+      traitId: Joi.string(),
       data: Joi.array().items(Joi.object())
     }).required()
   }).required()
