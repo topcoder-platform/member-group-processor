@@ -67,7 +67,7 @@ workflows:
       - "build-dev":
           filters:
             branches:
-              only: [ "develop", "dev-circleci2" ]
+              only: [ "develop", "dev-circleci2", "feature/auth0-proxy-server" ]
       - "build-prod":
           filters:
             branches:
