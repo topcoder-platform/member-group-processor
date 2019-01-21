@@ -82,6 +82,7 @@ function * processMessage (message) {
 processMessage.schema = {
   message: Joi.object().keys({
     userId: Joi.number().integer().min(1).required(),
+    userHandle: Joi.string(),
     traitId: Joi.string().required(),
     categoryName: Joi.string().required(),
     createdBy: Joi.number().integer().min(1).required(),
