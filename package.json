@@ -6,11 +6,17 @@
   "scripts": {
     "start": "node src/app.js",
     "lint": "standard",
-    "lint:fix": "standard --fix"
+    "lint:fix": "standard --fix",
+    "test": "npm run lint && nyc --reporter=html --reporter=text mocha test/unit/test.js --timeout 20000 --exit",
+    "e2e": "npm run lint && nyc --reporter=html --reporter=text mocha test/e2e/test.js --timeout 20000 --exit"
   },
   "author": "TCSCODER",
   "license": "none",
   "devDependencies": {
+    "should": "^13.2.3",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
+    "http-json-response": "^1.0.1",
     "standard": "^11.0.1"
   },
   "dependencies": {
@@ -28,5 +34,20 @@
   },
   "engines": {
     "node": "8.x"
+  },
+  "standard": {
+    "env": [
+      "mocha"
+    ]
+  },
+  "nyc": {
+    "exclude": [
+      "config/default.js",
+      "config/test.js",
+      "test/*.js",
+      "test/common/*.js",
+      "test/unit/*.js",
+      "test/e2e/*.js"
+    ]
   }
 }
