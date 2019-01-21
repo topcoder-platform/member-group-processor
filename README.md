@@ -1,4 +1,4 @@
-# Topcoder - Community Processor 
+# Topcoder - Community Processor
 
 ## Dependencies
 
@@ -19,6 +19,7 @@ The following parameters can be set in config files or in env variables:
 - KAFKA_CLIENT_CERT_KEY: Kafka connection private key, optional; default value is undefined;
     if not provided, then SSL connection is not used, direct insecure connection is used;
     if provided, it can be either path to private key file or private key content
+- KAFKA_GROUP_ID: Kafka group id, default value is 'tc-member-group-processor-group'
 - KAFKA_TOPICS: Kafka topics to listen, default value is ['member.action.profile.trait.create', 'member.action.profile.trait.update', 'member.action.profile.trait.delete']
 - TC_API_BASE_URL: TC API base URL, default value is 'https://api.topcoder.com'
 - AUTH0_URL: Auth0 URL, used to get TC M2M token
@@ -31,6 +32,12 @@ In order to properly get TC M2M token, the AUTH0_URL, AUTH0_CLIENT_ID and AUTH0_
 export AUTH0_URL="<Auth0 URL>"
 export AUTH0_CLIENT_ID="<Auth0 Client ID>"
 export AUTH0_CLIENT_SECRET="<Auth0 Client Secret>"
+
+Configuration for test is at config/test.js:
+
+- MOCK_M2M_API_PORT: the port of mock M2M api, default value: 4000
+- MOCK_GROUP_API_PORT: the port of mock group api, default value: 4001
+- WAIT_TIME: wait time used in test, default is 1500 or 1.5 second
 
 ## Local Kafka setup
 
@@ -108,6 +115,10 @@ docker-compose up
     ]
   },
   "createdBy": 23225544,
-  - "updatedAt": "8/15/18 6:22 PM"
+  "updatedAt": "8/15/18 6:22 PM"
 }
 ```
+
+## Testing
+- Run `npm run test` to execute unit tests.
+- RUN `npm run e2e` to execute e2e tests.
