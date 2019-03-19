@@ -24,7 +24,9 @@ install_deploysuite: &install_deploysuite
             cp ./../buildscript/awsconfiguration.sh .
 run_build: &run_build
           name: Installation of build dependencies.
-          command: ./build.sh            
+          command: |
+            chmod +x build.sh
+            ./build.sh            
 
 jobs:
   # Build & Deploy against development backend
