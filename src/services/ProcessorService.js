@@ -131,12 +131,12 @@ function * addMemberToClosedCommunity (message) {
     switch (provider) {
       case 'wipro-adfs':
         groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
-        groupId = _.first(_.map(groupsRes, 'oldId'))
+        groupId = _.first(_.map(groupsRes.data, 'oldId'))
 
         break
       case 'Zurich':
         groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
-        groupId = _.first(_.map(groupsRes, 'oldId'))
+        groupId = _.first(_.map(groupsRes.data, 'oldId'))
 
         break
       default:
