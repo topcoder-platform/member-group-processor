@@ -35,17 +35,16 @@ const dataHandler = (messageSet, topic, partition) =>
       return
     }
     const payload = _.get(messageJSON, 'payload', {})
-    if (_.get(payload, 'traitId', '').toLowerCase() !== 'communities') {
-      logger.info("The message traitId field is not 'communities'. ignoring.")
-      // ignore the message
-      return
-    }
     return (
       co(function * () {
         if (topic === 'identity.notification.create') {
           yield ProcessorService.addMemberToClosedCommunity(payload)
         } else {
-          yield ProcessorService.processMessage(payload)
+          if (_.get(payload, 'traitId', '').toLowerCase() !== 'communities') {
+            logger.info("The message traitId field is not 'communities'. ignoring.")
+          } else {
+            yield ProcessorService.processMessage(payload)
+          }
         }
       })
         // commit offset
