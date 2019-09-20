@@ -33,7 +33,7 @@ function * processMessage (message) {
   const token = yield helper.getM2Mtoken()
   const tcAPIClient = axios.create({
     baseURL: config.TC_API_BASE_URL,
-    timeout: 1000000,
+    timeout: 10000,
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -116,7 +116,7 @@ function * addMemberToClosedCommunity (message) {
   const token = yield helper.getM2Mtoken()
   const tcAPIClient = axios.create({
     baseURL: config.TC_API_BASE_URL,
-    timeout: 1000000,
+    timeout: 10000,
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'
