@@ -12,14 +12,10 @@ module.exports = {
   KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT,
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY,
 
-  KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID || 'tc-member-group-processor-group-2',
+  KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID || 'tc-member-group-processor-group',
 
-  KAFKA_TOPICS: (process.env.KAFKA_TOPICS && process.env.KAFKA_TOPICS.split(',')) || [
-    'member.action.profile.trait.create',
-    'member.action.profile.trait.update',
-    'member.action.profile.trait.delete',
-    'identity.notification.create'
-  ],
+  KAFKA_TOPICS: (process.env.KAFKA_TOPICS && process.env.KAFKA_TOPICS.split(',')) ||
+   ['member.action.profile.trait.create', 'member.action.profile.trait.update', 'member.action.profile.trait.delete'],
 
   TC_API_BASE_URL: process.env.TC_API_BASE_URL || 'https://api.topcoder.com',
 
