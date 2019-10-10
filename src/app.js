@@ -19,33 +19,43 @@ if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
 const consumer = new Kafka.GroupConsumer(options)
 
 // data handler
-const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (m) => {
-  const message = m.message.value.toString('utf8')
-  logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Offset: ${
-    m.offset}; Message: ${message}.`)
-  let messageJSON
-  try {
-    messageJSON = JSON.parse(message)
-  } catch (e) {
-    logger.error('Invalid message JSON.')
-    logger.error(e)
-    // ignore the message
-    return
-  }
-  const payload = _.get(messageJSON, 'payload', {})
-  if (_.get(payload, 'traitId', '').toLowerCase() !== 'communities') {
-    logger.info('The message traitId field is not \'communities\'. ignoring.')
-    // ignore the message
-    return
-  }
-  return co(function * () {
-    yield ProcessorService.processMessage(payload)
+const dataHandler = (messageSet, topic, partition) =>
+  Promise.each(messageSet, m => {
+    const message = m.message.value.toString('utf8')
+    logger.info(
+      `Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Offset: ${m.offset}; Message: ${message}.`
+    )
+    let messageJSON
+    try {
+      messageJSON = JSON.parse(message)
+    } catch (e) {
+      logger.error('Invalid message JSON.')
+      logger.error(e)
+      // ignore the message
+      return
+    }
+    const payload = _.get(messageJSON, 'payload', {})
+    return (
+      co(function * () {
+        if (topic === 'identity.notification.create') {
+          yield ProcessorService.addMemberToClosedCommunity(payload)
+        } else {
+          if (_.get(payload, 'traitId', '').toLowerCase() !== 'communities') {
+            logger.info("The message traitId field is not 'communities'. ignoring.")
+          } else {
+            yield ProcessorService.processMessage(payload)
+          }
+        }
+      })
+        // commit offset
+        .then(() => logger.debug('Successfully processed message'))
+        .catch(err => logger.error(err))
+        .finally(() => {
+          logger.debug('Commiting Offset')
+          consumer.commitOffset({ topic, partition, offset: m.offset })
+        })
+    )
   })
-    // commit offset
-    .then(() => consumer.commitOffset({ topic, partition, offset: m.offset }))
-    .then(() => logger.debug('Successfully processed message'))
-    .catch((err) => logger.error(err))
-})
 
 // check if there is kafka connection alive
 function check () {
@@ -61,10 +71,12 @@ function check () {
 }
 
 consumer
-  .init([{
-    subscriptions: config.KAFKA_TOPICS,
-    handler: dataHandler
-  }])
+  .init([
+    {
+      subscriptions: config.KAFKA_TOPICS,
+      handler: dataHandler
+    }
+  ])
   // consume configured topics
   .then(() => {
     logger.info('Initialized.......')
@@ -73,7 +85,7 @@ consumer
     logger.info(config.KAFKA_TOPICS)
     logger.info('Kick Start.......')
   })
-  .catch((err) => logger.error(err))
+  .catch(err => logger.error(err))
 
 if (process.env.NODE_ENV === 'test') {
   module.exports = consumer
