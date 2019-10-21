@@ -125,23 +125,9 @@ function * addMemberToClosedCommunity (message) {
 
   const provider = _.get(message, 'profile.provider', undefined)
 
-  let groupsRes = ''
-  let groupId = ''
   if (provider) {
-    switch (provider) {
-      case 'wipro-adfs':
-        groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
-        groupId = _.first(_.map(groupsRes.data, 'oldId'))
-
-        break
-      case 'Zurich':
-        groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
-        groupId = _.first(_.map(groupsRes.data, 'oldId'))
-
-        break
-      default:
-        logger.info('Skipping message as no ssoId found')
-    }
+    let groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
+    let groupId = _.first(_.map(groupsRes.data, 'oldId'))
 
     if (groupId) {
       logger.info(`Add user ${message.id} to group ${groupId}`)
