@@ -63,9 +63,7 @@ function * processMessage (message) {
     if (flag) {
       if (!foundMembership) {
         logger.info(`Add user ${memberId} to group ${groupId}`)
-        yield tcAPIClient.post(`/v5/groups/${groupId}/members`, {
-          param: { memberId: memberId.toString(), membershipType: 'user' }
-        })
+        yield tcAPIClient.post(`/v5/groups/${groupId}/members`, { memberId: memberId.toString(), membershipType: 'user' })
       } else {
         logger.info(`The user ${memberId} is already in group ${groupId}`)
       }
@@ -131,9 +129,7 @@ function * addMemberToClosedCommunity (message) {
 
     if (groupId) {
       logger.info(`Add user ${message.id} to group ${groupId}`)
-      yield tcAPIClient.post(`/v5/groups/${groupId}/members`, {
-        param: { memberId: message.id.toString(), membershipType: 'user' }
-      })
+      yield tcAPIClient.post(`/v5/groups/${groupId}/members`, { memberId: message.id.toString(), membershipType: 'user' })
     } else {
       logger.info(`Group not found having ssoId ${provider}`)
     }
