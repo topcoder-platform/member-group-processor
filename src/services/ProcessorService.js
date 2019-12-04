@@ -63,9 +63,7 @@ function * processMessage (message) {
     if (flag) {
       if (!foundMembership) {
         logger.info(`Add user ${memberId} to group ${groupId}`)
-        yield tcAPIClient.post(`/v5/groups/${groupId}/members`, {
-          param: { memberId: memberId.toString(), membershipType: 'user' }
-        })
+        yield tcAPIClient.post(`/v5/groups/${groupId}/members`, { memberId: memberId.toString(), membershipType: 'user' })
       } else {
         logger.info(`The user ${memberId} is already in group ${groupId}`)
       }
@@ -125,29 +123,13 @@ function * addMemberToClosedCommunity (message) {
 
   const provider = _.get(message, 'profile.provider', undefined)
 
-  let groupsRes = ''
-  let groupId = ''
   if (provider) {
-    switch (provider) {
-      case 'wipro-adfs':
-        groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
-        groupId = _.first(_.map(groupsRes.data, 'oldId'))
-
-        break
-      case 'Zurich':
-        groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
-        groupId = _.first(_.map(groupsRes.data, 'oldId'))
-
-        break
-      default:
-        logger.info('Skipping message as no ssoId found')
-    }
+    let groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
+    let groupId = _.first(_.map(groupsRes.data, 'oldId'))
 
     if (groupId) {
       logger.info(`Add user ${message.id} to group ${groupId}`)
-      yield tcAPIClient.post(`/v5/groups/${groupId}/members`, {
-        param: { memberId: message.id.toString(), membershipType: 'user' }
-      })
+      yield tcAPIClient.post(`/v5/groups/${groupId}/members`, { memberId: message.id.toString(), membershipType: 'user' })
     } else {
       logger.info(`Group not found having ssoId ${provider}`)
     }
