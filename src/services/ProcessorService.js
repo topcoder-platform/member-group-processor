@@ -125,7 +125,7 @@ function * addMemberToClosedCommunity (message) {
 
   if (provider) {
     let groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
-    let groupId = _.first(_.map(groupsRes.data, 'oldId'))
+    let groupId = _.first(_.map(groupsRes, 'oldId'))
 
     if (groupId) {
       logger.info(`Add user ${message.id} to group ${groupId}`)
