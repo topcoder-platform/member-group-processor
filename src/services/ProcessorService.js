@@ -121,11 +121,14 @@ function * addMemberToClosedCommunity (message) {
     }
   })
 
+  logger.info(`Getting SSO Provider from message`)
   const provider = _.get(message, 'profile.provider', undefined)
+  logger.info(`Got SSO Provider ${provider} from message`)
 
   if (provider) {
     let groupsRes = yield tcAPIClient.get(`/v5/groups?ssoId=${provider}`)
     let groupId = _.first(_.map(groupsRes, 'oldId'))
+    logger.info(`Got groupId ${groupId} for SSO Provider ${provider}`)
 
     if (groupId) {
       logger.info(`Add user ${message.id} to group ${groupId}`)
