@@ -12,7 +12,7 @@ install_dependency: &install_dependency
 install_deploysuite: &install_deploysuite
           name: Installation of install_deploysuite.
           command: |
-            git clone --branch v1.3 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+            git clone --branch v1.4.14 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/master_deploy.sh .
             cp ./../buildscript/buildenv.sh .
             cp ./../buildscript/awsconfiguration.sh .
@@ -42,7 +42,27 @@ jobs:
             ./buildenv.sh -e DEV -b member-group-processor_deployvar
             source buildenvvar
             ./master_deploy.sh -d ECS -e DEV -t latest -s dev-global-appvar,member-group-processor_appvar -i member-group-processor
-               
+
+  # Build & Deploy against development backend
+  "build-qa":
+    <<: *defaults
+      
+    steps:
+      # Initialization.
+      - checkout
+      - setup_remote_docker
+      - run: *install_dependency
+      - run: *install_deploysuite
+      - run: *run_build
+
+      - deploy:
+          command: |
+            ./awsconfiguration.sh QA
+            source awsenvconf 
+            ./buildenv.sh -e QA -b member-group-processor_deployvar
+            source buildenvvar
+            ./master_deploy.sh -d ECS -e QA -t latest -s qa-global-appvar,member-group-processor_appvar -i member-group-processor            
+
   "build-prod":
     <<: *defaults
     steps:
@@ -69,6 +89,11 @@ workflows:
           filters:
             branches:
               only: [ "develop" ]
+      - "build-qa":
+          context : org-global
+          filters:
+            branches:
+              only: [ "qa" ]              
       - "build-prod":
           context : org-global
           filters:
